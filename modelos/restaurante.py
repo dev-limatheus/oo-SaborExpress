@@ -1,21 +1,44 @@
-class Restaurante:
+from modelos.avaliacao import Avaliacao
 
+class Restaurante:
     restaurantes = []
 
     def __init__(self, nome, categoria):
-        self.nome = nome
-        self.categoria = categoria
-        self.ativo = False
+        self._nome = nome.title()
+        self._categoria = categoria.title()
+        self._ativo = False
+        self._avaliacao = []
         Restaurante.restaurantes.append(self)
     
     def __str__(self):  #transformar o endereço de memoria em texto
-        return f'{self.nome} | {self.categoria}'
+        return f'{self._nome} | {self._categoria}'
     
-    def listar_restaurantes():
-        for restaurante in Restaurante.restaurantes:
-            print(f'{restaurante.nome} | {restaurante.categoria} | {restaurante.ativo}')
+    @classmethod
+    def listar_restaurantes(cls): 
+        print(f'{'Nome do Restaurante'.ljust(25)} | {'Categoria'.ljust(25)} | {'Avaliação'.ljust(25)} | {'Visibilidade'}')
+        for restaurante in cls.restaurantes:
+            print(f'{restaurante._nome.ljust(25)} | {restaurante._categoria.ljust(25)} | {str(restaurante.media_avaliacoes).ljust(25)} | {restaurante._ativo}')
 
-restaurante_praca = Restaurante('Bistrô', 'Gourmet')
-restaurante_pizza = Restaurante('Pizza Place', 'Italiano')
+    
+    @property
+    def ativo(self):
+        return '☑' if self._ativo else '☐'
+    
+    def alternar_visibilidade(self):
+        self._ativo = not self._ativo
 
-Restaurante.listar_restaurantes()
+    def receber_avaliacao(self, cliente, nota):
+        if 0 < nota <= 5:
+            avaliacao = Avaliacao(cliente, nota)
+            self._avaliacao.append(avaliacao)
+
+
+    @property
+    def media_avaliacoes(self):
+        if not self._avaliacao:
+            return '-'
+        else:
+            soma = sum(avaliacao._nota for avaliacao in self._avaliacao)
+            quantidade = len(self._avaliacao)
+            media = round(soma / quantidade, 1)
+            return media
