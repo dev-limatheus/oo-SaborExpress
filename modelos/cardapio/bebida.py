@@ -6,4 +6,4 @@ class Bebida(ItemCardapio):
         self._tamanho = tamanho
 
     def __str__(self):
-        return self._nome
+        return self._tamanho
